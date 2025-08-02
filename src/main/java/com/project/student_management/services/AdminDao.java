@@ -129,6 +129,49 @@ public class AdminDao {
 		
 	}
 
+	public void addCourseToProfile(Admin registeredAdmin) {
+		try {
+				CourseDao courseDao = new CourseDao();
+				if(!courseDao.isConfigureCourse()) {
+					System.out.println("Problem in course configuration");
+					return;
+				}
+				courseDao.fetchAllCourse();
+				
+				
+				
+				System.out.println("Enter Course_id to Add Your Profile : ");
+				int course_id = sc.nextInt();
+				
+				Course selectedCourse = session.get(Course.class, course_id);
+				
+				if(selectedCourse == null) {
+					System.out.println("Course is not available with this id");
+					return;
+				}
+				
+				if(registeredAdmin.getCourses().contains(selectedCourse)) {
+					System.out.println("This Course is Already Added");
+					return;
+				}
+				
+				
+				Course course = new Course();
+				course.setCourse_id(course_id);
+				registeredAdmin.getCourses().add(course);
+				
+				session.update(registeredAdmin);
+				transaction.commit();
+				System.out.println("Course Saved");	
+			
+		}catch(Exception ex) {
+			if(transaction != null) transaction.rollback();
+			ex.printStackTrace();
+			System.out.println("Exception in addCourseToProfile() : " + ex);
+		}
+		
+	}
+
 
 	
 	

@@ -47,6 +47,7 @@ public class StudentDao {
 		return status;
 	}
 
+	// student signup
 	public Student singupStudent() {
 		
 		try {
@@ -69,7 +70,7 @@ public class StudentDao {
 			query.setParameter("umail", email);
 			List<Student> result = query.list();
 			if(!result.isEmpty()) {
-				System.out.println("Student Alread Registered With This Username or Email");
+				System.out.println("Student Already Registered With This Username or Email");
 				return null;
 			}
 			
@@ -116,6 +117,7 @@ public class StudentDao {
 		}
 	}
 
+	// student profile
 	public void profile(Student registeredStudent) {
 		try {
 			System.out.println("Student Profile: ");
@@ -123,8 +125,13 @@ public class StudentDao {
 			System.out.println("Username : " + registeredStudent.getUsername());
 			System.out.println("Email : " + registeredStudent.getEmail());
 			System.out.println("Purchased Courses : ");
-			for(Course course: registeredStudent.getCourses()) {
-				System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
+			
+			if(registeredStudent.getCourses() != null) {
+				for(Course course: registeredStudent.getCourses()) {
+					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
+				}
+			}else {
+				System.out.println("No course Purchased ");
 			}
 			
 		}catch(Exception ex){
@@ -181,6 +188,38 @@ public class StudentDao {
 			if(transaction != null) transaction.rollback();
 			System.out.println("Course Not Saved");	
 			System.out.println("Exception in buyCourse() : " + ex);
+		}
+		
+	}
+
+	public void viewAllStudents() {
+
+		try {
+			Student student = new Student();
+			
+			String hql = "FROM Student";
+			Query<Student> query = session.createQuery(hql, Student.class);
+			
+			List<Student> results = query.list();
+			System.out.println("List of Students : ");
+			for(Student s: results) {
+				System.out.println("Id : " + s.getId() + ", Username : " + s.getUsername() + ", Email : " + s.getEmail());
+				if(s.getCourses() != null) {
+					System.out.println("List of Courses bought : ");
+					for(Course c: s.getCourses()) {
+						System.out.println("Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
+					}
+				}else {
+					System.out.println("No Course Purchased");
+				}
+			}
+			
+			
+			
+		}catch(Exception ex) {
+			if(transaction != null) transaction.rollback();
+			ex.printStackTrace();
+			System.out.println("Exception in viewAllStudent() : " + ex);
 		}
 		
 	}

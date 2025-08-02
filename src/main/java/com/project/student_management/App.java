@@ -107,11 +107,12 @@ public class App
         	System.out.println("Enter 2 to View Course");       	
         	System.out.println("Enter 3 to Add Course");
         	System.out.println("Enter 4 to Update Course");      
-        	System.out.println("Enter 5 to Delete Course");    
+        	System.out.println("Enter 5 to Delete Course");
+        	System.out.println("Enter 6 to add Course in your profile");
         	
-        	System.out.println("Enter 6 to View Students");      
-        	System.out.println("Enter 7 to Add Student");      	
-        	System.out.println("Enter 8 to Update Student");
+        	System.out.println("Enter 7 to View Students");      
+        	System.out.println("Enter 8 to Add Student");      	
+        	System.out.println("Enter 9 to Update Student");
         	
         	System.out.println("Enter Option");
         	int opt = sc.nextInt();
@@ -137,10 +138,17 @@ public class App
         		break;
         		
         	case 6:
+        		adminDao.addCourseToProfile(registeredAdmin);
         		
         		break;
         		
         	case 7:
+        		if(!studentDao.isConfigure()) {
+        			System.out.println("Problem in configuration of Student in Admin Switch");
+        			return;
+        		}
+        		studentDao.viewAllStudents();
+        		
         		break;
         		
         	case 8:
