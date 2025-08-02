@@ -73,8 +73,11 @@ public class AdminDao {
 			admin.setUsername(username);
 			admin.setEmail(email);
 			admin.setPassword(password);
+			
 			session.save(admin);
 			transaction.commit();
+			
+			System.out.println("You are Registered Successfully");
 			return admin;
 		}catch(Exception ex) {
 			if(transaction != null) transaction.rollback();

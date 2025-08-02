@@ -110,7 +110,7 @@ public class App
         	System.out.println("Enter 5 to Delete Course");
         	System.out.println("Enter 6 to add Course in your profile");
         	
-        	System.out.println("Enter 7 to View Students");      
+        	System.out.println("Enter 7 to View Students With Course");      
         	System.out.println("Enter 8 to Add Student");      	
         	System.out.println("Enter 9 to Update Student");
         	
@@ -152,7 +152,21 @@ public class App
         		break;
         		
         	case 8:
+        		if(!studentDao.isConfigure()) {
+        			System.out.println("Problem in configuration of Student in Admin Switch");
+        			return;
+        		}
+        		studentDao.singupStudent();
         		break;
+        		
+        	case 9:
+        		if(!studentDao.isConfigure()) {
+        			System.out.println("Problem in configuration of Student in Admin Switch");
+        			return;
+        		}
+        		studentDao.updateStudent();
+        		break;
+        		
         	default:
     			System.out.println("Enter Given Option");
         	}

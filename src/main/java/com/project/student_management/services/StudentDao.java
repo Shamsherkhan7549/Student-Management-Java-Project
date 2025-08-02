@@ -77,8 +77,20 @@ public class StudentDao {
 			student.setUsername(username);
 			student.setEmail(email);
 			student.setPassword(password);
+			
 			session.save(student);
 			transaction.commit();
+			
+//			System.out.println("Do You Want to Buy Course, Now?");
+//			char per = sc.next().charAt(0);
+//			
+//			if(per == 'y') {
+//				buyCourse(student);
+//				System.out.println("Course Added");
+//			};
+			
+			
+			System.out.println("You are Registered Successfully");
 			return student;
 		}catch(Exception ex) {
 			if(transaction != null) transaction.rollback();
@@ -126,7 +138,7 @@ public class StudentDao {
 			System.out.println("Email : " + registeredStudent.getEmail());
 			System.out.println("Purchased Courses : ");
 			
-			if(registeredStudent.getCourses() != null) {
+			if(!registeredStudent.getCourses().isEmpty()) {
 				for(Course course: registeredStudent.getCourses()) {
 					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
 				}
@@ -204,7 +216,8 @@ public class StudentDao {
 			System.out.println("List of Students : ");
 			for(Student s: results) {
 				System.out.println("Id : " + s.getId() + ", Username : " + s.getUsername() + ", Email : " + s.getEmail());
-				if(s.getCourses() != null) {
+				System.out.println("s.getCourses() : " + s.getCourses());
+				if(!s.getCourses().isEmpty()) {
 					System.out.println("List of Courses bought : ");
 					for(Course c: s.getCourses()) {
 						System.out.println("Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
@@ -220,6 +233,47 @@ public class StudentDao {
 			if(transaction != null) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in viewAllStudent() : " + ex);
+		}
+		
+	}
+
+	public void updateStudent() {
+		try {
+			
+			System.out.println("Enter Student_id");
+			int id = sc.nextInt();
+			
+			Student studentInfo = session.get(Student.class, id);
+
+			if(studentInfo == null) {
+				System.out.println("Student is not available");
+				return;
+			}
+			
+			studentInfo.setId(id);
+			
+			System.out.println("Do want to update email?y/n.");
+			char per = sc.next().charAt(0);
+			if(per == 'y') {
+				System.out.println("Enter Student Email/Gmail");
+				String email = sc.next();
+				studentInfo.setEmail(email);
+			}
+			
+			System.out.println("Do want to update password? y/n.");
+			char per2 = sc.next().charAt(0);
+			if(per2 == 'y') {
+				System.out.println("Enter new password");
+				String newPassword = sc.next();
+				studentInfo.setPassword(newPassword);	
+			}
+			
+			session.update(studentInfo);
+			transaction.commit();
+			System.out.println(studentInfo.getUsername() + " is Updated");
+		}catch(Exception ex) {
+			if(transaction != null) transaction.rollback();
+			System.out.println("Exception in updateCourse() : " + ex);
 		}
 		
 	}
