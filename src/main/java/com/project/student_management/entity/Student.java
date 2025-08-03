@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,8 +32,21 @@ public class Student {
 			)
 	private Set<Course> courses = new HashSet<>();
 	
-	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "student")
 	private List<Attendance> attendance = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "student")
+	private List<Marks>marks = new ArrayList<>();
+	
+	
+
+	public List<Marks> getMarks() {
+		return marks;
+	}
+
+	public void setMarks(List<Marks> marks) {
+		this.marks = marks;
+	}
 
 	public int getId() {
 		return id;

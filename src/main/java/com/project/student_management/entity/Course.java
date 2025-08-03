@@ -31,6 +31,17 @@ public class Course {
 	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	private List<Attendance> attendance = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "course")
+	private List<Marks>marks = new ArrayList<>();
+	
+	public List<Marks> getMarks() {
+		return marks;
+	}
+
+	public void setMarks(List<Marks> marks) {
+		this.marks = marks;
+	}
+
 	public List<Attendance> getAttendance() {
 		return attendance;
 	}

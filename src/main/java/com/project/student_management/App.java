@@ -7,6 +7,7 @@ import com.project.student_management.entity.Student;
 import com.project.student_management.services.AdminDao;
 import com.project.student_management.services.AttendanceDao;
 import com.project.student_management.services.CourseDao;
+import com.project.student_management.services.MarksDao;
 import com.project.student_management.services.StudentDao;
 
 public class App 
@@ -25,6 +26,9 @@ public class App
         StudentDao studentDao = new StudentDao();
         //Attendance Dao
         AttendanceDao attendanceDao = new AttendanceDao();
+        
+        // MarksDao
+        MarksDao marksDao = new MarksDao();
        
         
         //CourseDao
@@ -114,6 +118,7 @@ public class App
         	System.out.println("Enter 8 to Add Student");      	
         	System.out.println("Enter 9 to Update Student");
         	System.out.println("Enter 10 to remove Student Enrollement");
+        	System.out.println("Enter 11 to give marks to Student");
         	
         	System.out.println("Enter Option");
         	int opt = sc.nextInt();
@@ -175,6 +180,16 @@ public class App
         		}
         		studentDao.removeEnrollment();
         		break;
+        		
+        		
+        	case 11:
+        		if(!marksDao.isConfigureMarks()) {
+        			System.out.println("Problem in configuration of Marks in Admin Switch");
+        			return;
+        		}
+        		marksDao.giveMarksToStudent();
+        		break;
+        	
         	default:
     			System.out.println("Enter Given Option");
         	}
@@ -199,7 +214,7 @@ public class App
         	
         	switch(opt) {
         	case 1:
-        		studentDao.isConfigure();
+
         		studentDao.profile(registeredStudent);
         		break;
         	case 2:
@@ -210,10 +225,6 @@ public class App
         		break;
         		
         	case 4:
-        		if(!attendanceDao.isConfigure()) {
-        			System.out.println("Problem in Attendance Configuration");
-        			return;
-        		}
         		attendanceDao.giveAttendance(registeredStudent);
         		break;
         	

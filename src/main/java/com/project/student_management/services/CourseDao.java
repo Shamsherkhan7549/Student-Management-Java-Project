@@ -13,6 +13,7 @@ import org.hibernate.resource.transaction.spi.TransactionStatus;
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
 import com.project.student_management.entity.Course;
+import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class CourseDao {
@@ -32,10 +33,9 @@ public class CourseDao {
 			cfg.addAnnotatedClass(Course.class);
 			cfg.addAnnotatedClass(Admin.class);
 			cfg.addAnnotatedClass(Attendance.class);
+			cfg.addAnnotatedClass(Marks.class);
 			
 			factory = cfg.buildSessionFactory();
-			session = factory.openSession();
-			transaction = session.beginTransaction();
 			
 			status = true;
 			
@@ -51,6 +51,10 @@ public class CourseDao {
 	//fetch all courses
 	public void fetchAllCourse() {
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			String hql = "FROM Course";
 			Query<Course> query = session.createQuery(hql,Course.class);
 			
@@ -75,7 +79,12 @@ public class CourseDao {
 	//insert course
 	public boolean insertcourse() {
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			Course course = new Course();
+			
 			System.out.println("Enter course name");
 			String course_name = sc.next();
 			
@@ -86,7 +95,7 @@ public class CourseDao {
 			int fees = sc.nextInt();
 			
 			String hql = "FROM Course WHERE course_name= :name";
-			Query<Course> query = session.createQuery(hql);
+			Query<Course> query = session.createQuery(hql,Course.class);
 			query.setParameter("name", course_name);
 			
 			List<Course> results = query.list();
@@ -113,6 +122,9 @@ public class CourseDao {
 	// update course
 	public void updateCourse() {
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
 			
 			System.out.println("Enter course_id");
 			int id = sc.nextInt();
@@ -157,6 +169,9 @@ public class CourseDao {
 	public void deleteCourese() {
 		try {
 
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			System.out.println("Enter course_id");
 			int id = sc.nextInt();
 			

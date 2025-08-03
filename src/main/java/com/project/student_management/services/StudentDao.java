@@ -15,6 +15,7 @@ import org.hibernate.resource.transaction.spi.TransactionStatus;
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
 import com.project.student_management.entity.Course;
+import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 
@@ -30,15 +31,15 @@ public class StudentDao {
 	public boolean isConfigure() {
 		
 		try {
+			
 			cfg = new Configuration().configure("hibernate.cfg.xml");
 			cfg.addAnnotatedClass(Student.class);
 			cfg.addAnnotatedClass(Course.class);
 			cfg.addAnnotatedClass(Admin.class);
 			cfg.addAnnotatedClass(Attendance.class);
-			
+			cfg.addAnnotatedClass(Marks.class);
 			factory = cfg.buildSessionFactory();
-			session = factory.openSession();
-			transaction = session.beginTransaction();
+			
 			status = true;
 		}catch(Exception ex) {
 			status = false;
@@ -53,6 +54,10 @@ public class StudentDao {
 	public Student singupStudent() {
 		
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			Student student = new Student();			
 			
 			System.out.println("Enter Student Username");
@@ -99,12 +104,20 @@ public class StudentDao {
 			ex.printStackTrace();
 			System.out.println("Exception In signupStudent() : " + ex);
 			return null;
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 	}
 
 	//Student login
 	public Student loginStudent() {
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			System.out.println("Enter Username");
         	String username = sc.next();
         	
@@ -129,12 +142,21 @@ public class StudentDao {
 			System.out.println("Student Not Registered");
 			System.out.println("Exception in loginAdmin() : " + ex);
 			return null;
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
+		
+		
 	}
 
 	// student profile
 	public void profile(Student registeredStudent) {
 		try {
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			System.out.println("Student Profile: ");
 			
 			System.out.println("Username : " + registeredStudent.getUsername());
@@ -152,20 +174,38 @@ public class StudentDao {
 		}catch(Exception ex){
 			ex.printStackTrace();
 			System.out.println("Exception in student profile() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
+		
 		
 	}
 
 	//buy course
 	public void buyCourse(Student registeredStudent) {
+		 	Session session = null;
+		    Transaction transaction = null;
 		try {
-			CourseDao courseDao = new CourseDao();
-			if(!courseDao.isConfigureCourse()) {
-				System.out.println("Problem in course configuration");
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
+			
+			String hql = "FROM Course";
+			Query<Course> query = session.createQuery(hql, Course.class);
+			
+			System.out.println("Course list : ");
+			List<Course> results = query.list();
+			
+			if(results.isEmpty()) {
+				System.out.println("Course not available");
 				return;
 			}
-			courseDao.fetchAllCourse();
 			
+			for(Course c: results) {
+				System.out.println("Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
+			}
 			
 			
 			System.out.println("Enter Course_id to Buy : ");
@@ -192,10 +232,8 @@ public class StudentDao {
 				System.out.println("Payment Failed");
 				return;
 			}
-			
-			Course course = new Course();
-			course.setCourse_id(course_id);
-			registeredStudent.getCourses().add(course);
+
+			registeredStudent.getCourses().add(selectedCourse);
 			
 			session.update(registeredStudent);
 			transaction.commit();
@@ -208,6 +246,10 @@ public class StudentDao {
 			ex.printStackTrace();
 			System.out.println("Course Not Saved");	
 			System.out.println("Exception in buyCourse() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}
@@ -215,6 +257,10 @@ public class StudentDao {
 	public void viewAllStudents() {
 
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			Student student = new Student();
 			
 			String hql = "FROM Student";
@@ -241,12 +287,19 @@ public class StudentDao {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in viewAllStudent() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}
 
 	public void updateStudent() {
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
 			
 			System.out.println("Enter Student_id");
 			int id = sc.nextInt();
@@ -282,6 +335,10 @@ public class StudentDao {
 		}catch(Exception ex) {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			System.out.println("Exception in updateCourse() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}
@@ -289,6 +346,10 @@ public class StudentDao {
 	//remove enrollment
 	public void removeEnrollment() {
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			Student student = new Student();
 			
 			System.out.println("Enter student id to remove enrollment.");
@@ -334,6 +395,10 @@ public class StudentDao {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in removeEnrollment() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}

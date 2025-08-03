@@ -12,6 +12,7 @@ import org.hibernate.resource.transaction.spi.TransactionStatus;
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
 import com.project.student_management.entity.Course;
+import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class AdminDao {
@@ -31,6 +32,8 @@ public class AdminDao {
 			cfg.addAnnotatedClass(Course.class);
 			cfg.addAnnotatedClass(Admin.class);
 			cfg.addAnnotatedClass(Attendance.class);
+			cfg.addAnnotatedClass(Marks.class);
+			
 			factory = cfg.buildSessionFactory();
 			session = factory.openSession();
 			transaction = session.beginTransaction();

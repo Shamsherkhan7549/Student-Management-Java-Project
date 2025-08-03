@@ -13,6 +13,7 @@ import org.hibernate.query.Query;
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
 import com.project.student_management.entity.Course;
+import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class AttendanceDao {
@@ -31,10 +32,9 @@ public class AttendanceDao {
 			cfg.addAnnotatedClass(Course.class);
 			cfg.addAnnotatedClass(Admin.class);
 			cfg.addAnnotatedClass(Attendance.class);
-			
+			cfg.addAnnotatedClass(Marks.class);
 			factory = cfg.buildSessionFactory();
-			session = factory.openSession();
-			transaction = session.beginTransaction();
+			
 			status = true;
 		}catch(Exception ex) {
 			System.out.println("Exception in Configuration : " + ex);
@@ -47,6 +47,10 @@ public class AttendanceDao {
 	public void giveAttendance(Student registeredStudent) {
 
 		try {
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			Attendance attendance = new Attendance();
 			Course course = new Course();
 			Student student = new Student();
