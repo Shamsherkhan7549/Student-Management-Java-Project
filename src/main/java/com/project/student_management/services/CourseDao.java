@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
@@ -40,6 +41,7 @@ public class CourseDao {
 			
 		}catch(Exception ex) {
 			status = false;
+			ex.printStackTrace();
 			System.out.println("Exception in Course Configuration : " + ex);
 		}
 		
@@ -101,7 +103,7 @@ public class CourseDao {
 			System.out.println(course_name + " is inserted");
 			return true;
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in insertCourse() : " + ex);
 			return false;
@@ -144,7 +146,8 @@ public class CourseDao {
 			transaction.commit();
 			System.out.println(courseInfo.getCourse_name() + " is Updated");
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
+			ex.printStackTrace();
 			System.out.println("Exception in updateCourse() : " + ex);
 		}
 		
@@ -174,7 +177,7 @@ public class CourseDao {
 			
 			
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in deleteCourse() : " + ex);
 		}

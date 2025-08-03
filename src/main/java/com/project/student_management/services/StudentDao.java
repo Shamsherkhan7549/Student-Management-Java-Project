@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
@@ -40,8 +41,9 @@ public class StudentDao {
 			transaction = session.beginTransaction();
 			status = true;
 		}catch(Exception ex) {
-			System.out.println("Exception in Configuration : " + ex);
 			status = false;
+			ex.printStackTrace();
+			System.out.println("Exception in Configuration : " + ex);	
 		}
 		
 		return status;
@@ -93,7 +95,7 @@ public class StudentDao {
 			System.out.println("You are Registered Successfully");
 			return student;
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception In signupStudent() : " + ex);
 			return null;
@@ -123,6 +125,7 @@ public class StudentDao {
 			return null;
 			
 		}catch(Exception ex) {
+			ex.printStackTrace();
 			System.out.println("Student Not Registered");
 			System.out.println("Exception in loginAdmin() : " + ex);
 			return null;
@@ -147,11 +150,13 @@ public class StudentDao {
 			}
 			
 		}catch(Exception ex){
+			ex.printStackTrace();
 			System.out.println("Exception in student profile() : " + ex);
 		}
 		
 	}
 
+	//buy course
 	public void buyCourse(Student registeredStudent) {
 		try {
 			CourseDao courseDao = new CourseDao();
@@ -194,10 +199,13 @@ public class StudentDao {
 			
 			session.update(registeredStudent);
 			transaction.commit();
+			
 			System.out.println("Course Saved");	
 			
+			
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
+			ex.printStackTrace();
 			System.out.println("Course Not Saved");	
 			System.out.println("Exception in buyCourse() : " + ex);
 		}
@@ -230,7 +238,7 @@ public class StudentDao {
 			
 			
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in viewAllStudent() : " + ex);
 		}
@@ -272,8 +280,60 @@ public class StudentDao {
 			transaction.commit();
 			System.out.println(studentInfo.getUsername() + " is Updated");
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			System.out.println("Exception in updateCourse() : " + ex);
+		}
+		
+	}
+
+	//remove enrollment
+	public void removeEnrollment() {
+		try {
+			Student student = new Student();
+			
+			System.out.println("Enter student id to remove enrollment.");
+			int id = sc.nextInt();
+			student.setId(id);
+			
+			student = session.get(Student.class, id);
+			if(student == null) {
+				System.out.println("Student is not available with this id");
+				return;
+			}
+			
+			System.out.println("Enter course id to remove enrollment.");
+			int course_id = sc.nextInt();
+			
+			
+			if(student.getCourses().isEmpty()) {
+				System.out.println("This student is not Enrolled");
+				return;
+			}
+			
+			for(Course c : student.getCourses()) {
+				System.out.println("course_id : " + c.getCourse_id() + ", course : " + c.getCourse_name());
+				if(c.getCourse_id() == course_id) {
+					  student.getCourses().remove(c);
+					
+					session.update(student);
+					
+					System.out.println("Do You Want to Undo? y/n");
+					char per = sc.next().charAt(0);
+					if(per == 'y') {
+						transaction.rollback();
+						System.out.println("Student Enrollment not removed");
+						return;
+					}			
+				}	
+			}
+			
+			transaction.commit();
+			System.out.println("Student Enrollment removed");
+			
+		}catch(Exception ex) {
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
+			ex.printStackTrace();
+			System.out.println("Exception in removeEnrollment() : " + ex);
 		}
 		
 	}

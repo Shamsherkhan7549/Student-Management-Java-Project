@@ -113,6 +113,7 @@ public class App
         	System.out.println("Enter 7 to View Students With Course");      
         	System.out.println("Enter 8 to Add Student");      	
         	System.out.println("Enter 9 to Update Student");
+        	System.out.println("Enter 10 to remove Student Enrollement");
         	
         	System.out.println("Enter Option");
         	int opt = sc.nextInt();
@@ -167,6 +168,13 @@ public class App
         		studentDao.updateStudent();
         		break;
         		
+        	case 10:
+        		if(!studentDao.isConfigure()) {
+        			System.out.println("Problem in configuration of Student in Admin Switch");
+        			return;
+        		}
+        		studentDao.removeEnrollment();
+        		break;
         	default:
     			System.out.println("Enter Given Option");
         	}

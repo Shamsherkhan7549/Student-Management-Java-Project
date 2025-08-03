@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
@@ -80,7 +81,7 @@ public class AdminDao {
 			System.out.println("You are Registered Successfully");
 			return admin;
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception In signupAdmin() : " + ex);
 			return null;
@@ -111,6 +112,7 @@ public class AdminDao {
 			
 		}catch(Exception ex) {
 			System.out.println("Admin Not Registered");
+			ex.printStackTrace();
 			System.out.println("Exception in loginAdmin() : " + ex);
 			return null;
 		}
@@ -126,7 +128,18 @@ public class AdminDao {
 			System.out.println("Username : " + registeredAdmin.getUsername());
 			System.out.println("Email : " + registeredAdmin.getEmail());
 			
+			
+			if(!registeredAdmin.getCourses().isEmpty()) {
+				for(Course course: registeredAdmin.getCourses()) {
+					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
+				}
+			}else {
+				System.out.println("No course Added to Profile");
+			}
+			
+			
 		}catch(Exception ex){
+			ex.printStackTrace();
 			System.out.println("Exception in admin profile() : " + ex);
 		}
 		
@@ -168,7 +181,7 @@ public class AdminDao {
 				System.out.println("Course Saved");	
 			
 		}catch(Exception ex) {
-			if(transaction != null) transaction.rollback();
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in addCourseToProfile() : " + ex);
 		}
