@@ -2,10 +2,13 @@ package com.project.student_management;
 
 import java.util.Scanner;
 
+import org.hibernate.SessionFactory;
+
 import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Student;
 import com.project.student_management.services.AdminDao;
 import com.project.student_management.services.AttendanceDao;
+import com.project.student_management.services.ConfigurationFile;
 import com.project.student_management.services.CourseDao;
 import com.project.student_management.services.MarksDao;
 import com.project.student_management.services.StudentDao;
@@ -15,28 +18,34 @@ public class App
     public static void main( String[] args )
     {
     	Scanner sc = new Scanner(System.in);
+    	
+    	// Configuration
+    	ConfigurationFile cf = new ConfigurationFile();
+    	SessionFactory factory = cf.isConfigured();
+    	
+    	if(factory == null) {
+    		System.out.println("Problem in SessionFactory");
+    		return;
+    	}
+    	
     	//Admin
     	Admin registeredAdmin = new Admin();
     	//AdminDao
-        AdminDao adminDao = new AdminDao();
+        AdminDao adminDao = new AdminDao(factory);
         
         // Student
         Student registeredStudent = new Student();
         //StudentDao
-        StudentDao studentDao = new StudentDao();
+        StudentDao studentDao = new StudentDao(factory);
         //Attendance Dao
-        AttendanceDao attendanceDao = new AttendanceDao();
+        AttendanceDao attendanceDao = new AttendanceDao(factory);
         
         // MarksDao
-        MarksDao marksDao = new MarksDao();
+        MarksDao marksDao = new MarksDao(factory);
        
         
         //CourseDao
-        CourseDao courseDao = new CourseDao();
-        if(!courseDao.isConfigureCourse()){
-    		System.out.println("Problem in Course Configuration");
-    		return;
-    	}
+        CourseDao courseDao = new CourseDao(factory);
        
     	
     	// Admin
@@ -57,10 +66,7 @@ public class App
         switch(option) {
         case 1:
         	 // AdminDao configure
-            if(!adminDao.isConfigureAdmin()) {
-            	System.out.println("Problem in Admin Configuration");
-            	return;
-            }
+          
         	System.out.println("Enter Admin Passcode");
         	String passcode = sc.next();
         	
@@ -73,20 +79,14 @@ public class App
         	break;    	
         case 2:
         	 // AdminDao configure
-            if(!adminDao.isConfigureAdmin()) {
-            	System.out.println("Problem in Adminn Configuration");
-            	return;
-            }
+           
         	registeredAdmin = adminDao.loginAdmin();
         	if(registeredAdmin != null) {
         		isAdminLogin = true;
         	}
         	break;
         case 3:
-        	 if(!studentDao.isConfigure()) {
-             	System.out.println("Problem in Student Configuration");
-             	return;
-             }
+        	
         	registeredStudent = studentDao.singupStudent();
     		if(registeredStudent != null) {
     			isStudentLogin = true;
@@ -94,10 +94,7 @@ public class App
         	break;
         case 4:
         	// student login
-        	if(!studentDao.isConfigure()) {
-             	System.out.println("Problem in Student Configuration");
-             	return;
-             }
+        	
         	registeredStudent = studentDao.loginStudent();
         	if(registeredStudent != null) {
         		isStudentLogin = true;
@@ -145,54 +142,33 @@ public class App
         		
         	case 6:
         		adminDao.addCourseToProfile(registeredAdmin);
-        		
         		break;
         		
         	case 7:
-        		if(!studentDao.isConfigure()) {
-        			System.out.println("Problem in configuration of Student in Admin Switch");
-        			return;
-        		}
         		studentDao.viewAllStudents();
-        		
         		break;
         		
         	case 8:
-        		if(!studentDao.isConfigure()) {
-        			System.out.println("Problem in configuration of Student in Admin Switch");
-        			return;
-        		}
         		studentDao.singupStudent();
         		break;
         		
         	case 9:
-        		if(!studentDao.isConfigure()) {
-        			System.out.println("Problem in configuration of Student in Admin Switch");
-        			return;
-        		}
         		studentDao.updateStudent();
         		break;
         		
         	case 10:
-        		if(!studentDao.isConfigure()) {
-        			System.out.println("Problem in configuration of Student in Admin Switch");
-        			return;
-        		}
         		studentDao.removeEnrollment();
         		break;
         		
         		
         	case 11:
-        		if(!marksDao.isConfigureMarks()) {
-        			System.out.println("Problem in configuration of Marks in Admin Switch");
-        			return;
-        		}
         		marksDao.giveMarksToStudent();
         		break;
         	
         	default:
     			System.out.println("Enter Given Option");
         	}
+        	
         	System.out.println("Do you want to Signout y/n ? ");
         	char per = sc.next().charAt(0);
         	if(per == 'y') {
@@ -214,7 +190,6 @@ public class App
         	
         	switch(opt) {
         	case 1:
-
         		studentDao.profile(registeredStudent);
         		break;
         	case 2:

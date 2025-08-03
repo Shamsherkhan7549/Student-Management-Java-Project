@@ -17,39 +17,22 @@ import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class CourseDao {
-	Configuration cfg;
 	SessionFactory factory;
 	Session session;
 	Transaction transaction;
 	boolean status = false;
 	Scanner sc = new Scanner(System.in);
 	
-	// configuration setup
-	public boolean isConfigureCourse() {
-		
-		try {
-			cfg = new Configuration().configure("hibernate.cfg.xml");
-			cfg.addAnnotatedClass(Student.class);
-			cfg.addAnnotatedClass(Course.class);
-			cfg.addAnnotatedClass(Admin.class);
-			cfg.addAnnotatedClass(Attendance.class);
-			cfg.addAnnotatedClass(Marks.class);
-			
-			factory = cfg.buildSessionFactory();
-			
-			status = true;
-			
-		}catch(Exception ex) {
-			status = false;
-			ex.printStackTrace();
-			System.out.println("Exception in Course Configuration : " + ex);
-		}
-		
-		return status;
+	
+	
+	public CourseDao(SessionFactory factory) {
+		super();
+		this.factory = factory;
 	}
 	
 	//fetch all courses
 	public void fetchAllCourse() {
+		
 		try {
 			
 			session = factory.openSession();
@@ -72,6 +55,10 @@ public class CourseDao {
 			ex.printStackTrace();
 			System.out.println("Exception in fetchAllCourse() : " + ex);
 			
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}
@@ -116,6 +103,10 @@ public class CourseDao {
 			ex.printStackTrace();
 			System.out.println("Exception in insertCourse() : " + ex);
 			return false;
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 	}
 
@@ -161,6 +152,10 @@ public class CourseDao {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in updateCourse() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}
@@ -195,6 +190,10 @@ public class CourseDao {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in deleteCourse() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}

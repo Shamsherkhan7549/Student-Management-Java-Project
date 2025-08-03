@@ -7,6 +7,7 @@ import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,16 +23,16 @@ public class Course {
 	private String duration;
 	private int fees;
 	
-	@ManyToMany(mappedBy = "courses")
+	@ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
 	Set<Student> students = new HashSet<>();
 	
-	@ManyToMany(mappedBy = "courses")
+	@ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
 	Set<Admin> admins = new HashSet<>();
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Attendance> attendance = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "course")
+	@OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
 	private List<Marks>marks = new ArrayList<>();
 	
 	public List<Marks> getMarks() {

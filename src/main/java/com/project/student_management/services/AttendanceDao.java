@@ -17,33 +17,19 @@ import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class AttendanceDao {
-	Configuration cfg;
-	SessionFactory factory;
 	Session session;
+	SessionFactory factory;
 	Transaction transaction;
-	boolean status = false;
 	Scanner sc = new Scanner(System.in);
 	
-	public boolean isConfigure() {
-		
-		try {
-			cfg = new Configuration().configure("hibernate.cfg.xml");
-			cfg.addAnnotatedClass(Student.class);
-			cfg.addAnnotatedClass(Course.class);
-			cfg.addAnnotatedClass(Admin.class);
-			cfg.addAnnotatedClass(Attendance.class);
-			cfg.addAnnotatedClass(Marks.class);
-			factory = cfg.buildSessionFactory();
-			
-			status = true;
-		}catch(Exception ex) {
-			System.out.println("Exception in Configuration : " + ex);
-			status = false;
-		}
-		
-		return status;
+	
+	
+	public AttendanceDao(SessionFactory factory) {
+		super();
+		this.factory = factory;
 	}
 
+	
 	public void giveAttendance(Student registeredStudent) {
 
 		try {
@@ -52,17 +38,17 @@ public class AttendanceDao {
 			transaction = session.beginTransaction();
 			
 			Attendance attendance = new Attendance();
-			Course course = new Course();
-			Student student = new Student();
+
 			int student_id = registeredStudent.getId();
-			student.setId(student_id);
-			
+
 			System.out.println("Enter Course id : ");
 			int course_id = sc.nextInt();
-			course.setCourse_id(course_id);
-			
+
 			System.out.println("Enter Status : ");
 			char isPresent = sc.next().charAt(0);
+			
+			Student student = session.get(Student.class, student_id);
+			Course course = session.get(Course.class, course_id);
 			
 			// Todays Date
 			 LocalDate date = LocalDate.now();
@@ -76,7 +62,7 @@ public class AttendanceDao {
 			 
 			 List<Attendance> results = query.list();
 			 
-			 if(results != null) {
+			 if(!results.isEmpty()) {
 				 System.out.println("Your attendance already saved");
 				 return;
 			 }
@@ -88,12 +74,16 @@ public class AttendanceDao {
 			
 			session.save(attendance);
 			transaction.commit();
-			System.out.print("You attendance saved");
+			System.out.println("You attendance saved");
 			
 		}catch(Exception ex) {
 			if(transaction != null)transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in giveAttendance() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}

@@ -7,6 +7,7 @@ import java.util.Set;
 
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +25,7 @@ public class Student {
 	private String email;
 	private String password;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 				name = "enrollment",
 				joinColumns = @JoinColumn(name = "student_id"),
@@ -32,10 +33,10 @@ public class Student {
 			)
 	private Set<Course> courses = new HashSet<>();
 	
-	@OneToMany(mappedBy = "student")
+	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
 	private List<Attendance> attendance = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "student")
+	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
 	private List<Marks>marks = new ArrayList<>();
 	
 	

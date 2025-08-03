@@ -16,42 +16,26 @@ import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class AdminDao {
-	Configuration cfg;
 	SessionFactory factory;
 	Session session;
 	Transaction transaction;
-	boolean status = false;
 	Scanner sc = new Scanner(System.in);
 	
-	public boolean isConfigureAdmin() {
-		
-		try {
-			cfg = new Configuration();
-			cfg.configure("hibernate.cfg.xml");
-			cfg.addAnnotatedClass(Student.class);
-			cfg.addAnnotatedClass(Course.class);
-			cfg.addAnnotatedClass(Admin.class);
-			cfg.addAnnotatedClass(Attendance.class);
-			cfg.addAnnotatedClass(Marks.class);
-			
-			factory = cfg.buildSessionFactory();
-			session = factory.openSession();
-			transaction = session.beginTransaction();
-			status = true;
-			
-		}catch(Exception ex) {
-			status = false;
-			ex.printStackTrace();
-			System.out.println("Exception in Configuration : " + ex);
-		}
-		
-		return status;
+	
+	
+	public AdminDao(SessionFactory factory) {
+		super();
+		this.factory = factory;
 	}
+
 	
 	//Admin signUp
 	public Admin singupAdmin() {
+		session = null;
+		transaction = null;
 		try {
-			Admin admin = new Admin();			
+			session = factory.openSession();
+			transaction = session.beginTransaction();		
 			
 			System.out.println("Enter Admin Username");
 			String username = sc.next();
@@ -74,6 +58,7 @@ public class AdminDao {
 				return null;
 			}
 			
+			Admin admin = new Admin();
 			admin.setUsername(username);
 			admin.setEmail(email);
 			admin.setPassword(password);
@@ -88,12 +73,21 @@ public class AdminDao {
 			ex.printStackTrace();
 			System.out.println("Exception In signupAdmin() : " + ex);
 			return null;
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 	}
 	
 	//Admin Login
 	public Admin loginAdmin() {
+		session = null;
+		transaction = null;
 		try {
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			System.out.println("Enter Username");
         	String username = sc.next();
         	
@@ -118,6 +112,10 @@ public class AdminDao {
 			ex.printStackTrace();
 			System.out.println("Exception in loginAdmin() : " + ex);
 			return null;
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 		
@@ -125,13 +123,18 @@ public class AdminDao {
 
 	// Admin Profile
 	public void profile(Admin registeredAdmin) {
+		session = null;
+		transaction = null;
 		try {
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
 			System.out.println("Admin Profile: ");
 			
 			System.out.println("Username : " + registeredAdmin.getUsername());
 			System.out.println("Email : " + registeredAdmin.getEmail());
 			
-			
+			System.out.println("Courses : ");
 			if(!registeredAdmin.getCourses().isEmpty()) {
 				for(Course course: registeredAdmin.getCourses()) {
 					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
@@ -144,18 +147,36 @@ public class AdminDao {
 		}catch(Exception ex){
 			ex.printStackTrace();
 			System.out.println("Exception in admin profile() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}
 
 	public void addCourseToProfile(Admin registeredAdmin) {
+		session = null;
+		transaction = null;
 		try {
-				CourseDao courseDao = new CourseDao();
-				if(!courseDao.isConfigureCourse()) {
-					System.out.println("Problem in course configuration");
-					return;
-				}
-				courseDao.fetchAllCourse();
+			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+
+			String hql = "FROM Course";
+			Query<Course> query = session.createQuery(hql, Course.class);
+			
+			System.out.println("Course list : ");
+			List<Course> results = query.list();
+			
+			if(results.isEmpty()) {
+				System.out.println("Course not available");
+				return;
+			}
+			
+			for(Course c: results) {
+				System.out.println("Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
+			}
 				
 				
 				
@@ -174,10 +195,8 @@ public class AdminDao {
 					return;
 				}
 				
-				
-				Course course = new Course();
-				course.setCourse_id(course_id);
-				registeredAdmin.getCourses().add(course);
+				selectedCourse.setCourse_id(course_id);
+				registeredAdmin.getCourses().add(selectedCourse);
 				
 				session.update(registeredAdmin);
 				transaction.commit();
@@ -187,6 +206,10 @@ public class AdminDao {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in addCourseToProfile() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 		
 	}

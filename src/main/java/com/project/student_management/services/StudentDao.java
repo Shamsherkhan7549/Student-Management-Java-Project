@@ -21,44 +21,24 @@ import com.project.student_management.entity.Student;
 
 
 public class StudentDao {
-	Configuration cfg;
+
 	SessionFactory factory;
 	Session session;
 	Transaction transaction;
-	boolean status = false;
 	Scanner sc = new Scanner(System.in);
 	
-	public boolean isConfigure() {
-		
-		try {
-			
-			cfg = new Configuration().configure("hibernate.cfg.xml");
-			cfg.addAnnotatedClass(Student.class);
-			cfg.addAnnotatedClass(Course.class);
-			cfg.addAnnotatedClass(Admin.class);
-			cfg.addAnnotatedClass(Attendance.class);
-			cfg.addAnnotatedClass(Marks.class);
-			factory = cfg.buildSessionFactory();
-			
-			status = true;
-		}catch(Exception ex) {
-			status = false;
-			ex.printStackTrace();
-			System.out.println("Exception in Configuration : " + ex);	
-		}
-		
-		return status;
+	
+	public StudentDao(SessionFactory factory) {
+		super();
+		this.factory = factory;
 	}
 
 	// student signup
 	public Student singupStudent() {
-		
 		try {
 			
 			session = factory.openSession();
-			transaction = session.beginTransaction();
-			
-			Student student = new Student();			
+			transaction = session.beginTransaction();		
 			
 			System.out.println("Enter Student Username");
 			String username = sc.next();
@@ -81,6 +61,8 @@ public class StudentDao {
 				return null;
 			}
 			
+			
+			Student student = new Student();	
 			student.setUsername(username);
 			student.setEmail(email);
 			student.setPassword(password);
@@ -113,6 +95,7 @@ public class StudentDao {
 
 	//Student login
 	public Student loginStudent() {
+		
 		try {
 			
 			session = factory.openSession();
@@ -153,6 +136,7 @@ public class StudentDao {
 
 	// student profile
 	public void profile(Student registeredStudent) {
+		
 		try {
 			session = factory.openSession();
 			transaction = session.beginTransaction();
@@ -185,8 +169,7 @@ public class StudentDao {
 
 	//buy course
 	public void buyCourse(Student registeredStudent) {
-		 	Session session = null;
-		    Transaction transaction = null;
+		 	
 		try {
 			session = factory.openSession();
 			transaction = session.beginTransaction();
@@ -218,7 +201,9 @@ public class StudentDao {
 				return;
 			}
 			
-			if(registeredStudent.getCourses().contains(selectedCourse)) {
+			Student studentFromDb = session.get(Student.class, registeredStudent.getId());
+			
+			if(studentFromDb.getCourses().contains(selectedCourse)) {
 				System.out.println("This Course is Already Purchased");
 				return;
 			}
@@ -233,9 +218,9 @@ public class StudentDao {
 				return;
 			}
 
-			registeredStudent.getCourses().add(selectedCourse);
+			studentFromDb.getCourses().add(selectedCourse);
 			
-			session.update(registeredStudent);
+			session.update(studentFromDb);
 			transaction.commit();
 			
 			System.out.println("Course Saved");	
@@ -254,14 +239,13 @@ public class StudentDao {
 		
 	}
 
+	// view students
 	public void viewAllStudents() {
 
-		try {
-			
+		try {	
 			session = factory.openSession();
 			transaction = session.beginTransaction();
 			
-			Student student = new Student();
 			
 			String hql = "FROM Student";
 			Query<Student> query = session.createQuery(hql, Student.class);

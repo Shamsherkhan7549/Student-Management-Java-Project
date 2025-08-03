@@ -17,44 +17,23 @@ import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class MarksDao {
-	Configuration cfg;
 	SessionFactory factory;
 	Session session;
 	Transaction transaction;
-	boolean status = false;
+
 	Scanner sc = new Scanner(System.in);
 	
-	// configuration setup
-	public boolean isConfigureMarks() {
-		
-		try {
-			cfg = new Configuration().configure("hibernate.cfg.xml");
-			cfg.addAnnotatedClass(Student.class);
-			cfg.addAnnotatedClass(Course.class);
-			cfg.addAnnotatedClass(Admin.class);
-			cfg.addAnnotatedClass(Attendance.class);
-			cfg.addAnnotatedClass(Admin.class);
-			cfg.addAnnotatedClass(Marks.class);
-			
-			factory = cfg.buildSessionFactory();
-			session = factory.openSession();
-			transaction = session.beginTransaction();
-			
-			status = true;
-			
-		}catch(Exception ex) {
-			status = false;
-			ex.printStackTrace();
-			System.out.println("Exception in Course Configuration : " + ex);
-		}
-		
-		return status;
-	}
 	
+	
+	public MarksDao(SessionFactory factory) {
+		super();
+		this.factory = factory;
+	}
 	
 	public void giveMarksToStudent() {
 		try {
-			
+			session = factory.openSession();
+			transaction = session.beginTransaction();
 			Marks marks = new Marks();
 			Course course = new Course();
 			Student student = new Student();
@@ -103,6 +82,10 @@ public class MarksDao {
 			ex.printStackTrace();
 			System.out.println("Exception in insertCourse() : " + ex);
 			return ;
+		}finally {
+			if(session != null) {
+				session.close();
+			}
 		}
 	}
 	
