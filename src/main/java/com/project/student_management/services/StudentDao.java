@@ -174,7 +174,7 @@ public class StudentDao {
 			int avg = totalMarks/totalSub;
 			System.out.println("Average : " +  avg);
 			System.out.print("Grade : ");
-			if(avg < 0 && avg <30) {
+			if(avg >= 0 && avg <30) {
 				System.out.println("Fails");
 			}else if(avg >= 30 && avg <=60) {
 				System.out.println("C");
@@ -183,7 +183,7 @@ public class StudentDao {
 			}else if(avg>=80 && avg<=100 ) {
 				System.out.println("A");
 			}else {
-				System.out.println("There is problem in giving marks");
+				System.out.println("Invalid marks");
 			}
 			
 			
@@ -413,6 +413,125 @@ public class StudentDao {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
 			ex.printStackTrace();
 			System.out.println("Exception in removeEnrollment() : " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		
+	}
+	
+	
+	public void studentsResult() {
+		try {
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
+			String hql = "FROM Student";
+			Query<Student> query = session.createQuery(hql,Student.class);
+			
+			List<Student> results = query.list();
+			
+			if(results.isEmpty()) {
+				System.out.println("Student not available");
+				return;
+			}
+			
+			int totalMarks;
+			int totalSub;
+			int avg;
+			
+			for(Student s: results) {
+				System.out.println("Student id: " + s.getId() + ", Username: " + s.getUsername());
+				totalMarks = 0;
+				totalSub = 0;
+				avg = 0;
+				if(!s.getMarks().isEmpty()) {
+					for(Marks marks: s.getMarks()) {
+						totalMarks += marks.getMarks();
+						totalSub++;
+						System.out.println("Course id: " + marks.getCourse().getCourse_id() + ", Course : " + marks.getCourse().getCourse_name() + ", marks: " + marks.getMarks());
+							
+					}
+					
+					System.out.println("Total Marks: " + totalMarks);
+					avg = totalMarks/totalSub;
+					System.out.println("Average Marks: " + avg);
+					System.out.print("Grade : ");
+					if(avg < 0 && avg <30) {
+						System.out.println("Fails");
+					}else if(avg >= 30 && avg <=60) {
+						System.out.println("C");
+					}else if(avg>60 && avg <80) {
+						System.out.println("B");
+					}else if(avg>=80 && avg<=100 ) {
+						System.out.println("A");
+					}else {
+						System.out.println("There is problem in giving marks");
+					}
+					
+				}else {
+					System.out.println("Marks not given to " + s.getUsername());
+				}
+				
+				
+			}
+			
+		}catch(Exception ex) {
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
+			ex.printStackTrace();
+			System.out.println("Exceptioin in studentsResult(): " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+	}
+
+	public void singleStudentResult() {
+		try {
+			session = factory.openSession();
+			transaction = session.beginTransaction();			
+			System.out.println("Enter student id");
+			int id = sc.nextInt();
+			
+			Student student = session.get(Student.class, id);
+			System.out.println("Id: " + student.getId() +", Username: " + student.getUsername() + ", Email: " + student.getEmail());
+			System.out.println("Results: ");
+			if(student.getMarks().isEmpty()) {
+				System.out.println("Marks of " + student.getUsername() + " not added");
+				return;
+			}
+			
+			int totalMarks = 0;
+			int avg = 0;
+			int totalSub = 0;
+			
+			for(Marks m: student.getMarks()) {
+				totalMarks += m.getMarks();
+				totalSub++;
+				System.out.println("Course id : " + m.getCourse().getCourse_id() + ", Course: " + m.getCourse().getCourse_name() + "Marks: " + m.getMarks());
+			}
+			System.out.println("Total Marks: " + totalMarks);
+			avg = totalMarks/totalSub;
+			System.out.println("Average Marks: " + avg);
+			System.out.print("Grade : ");
+			if(avg < 0 && avg <30) {
+				System.out.println("Fails");
+			}else if(avg >= 30 && avg <=60) {
+				System.out.println("C");
+			}else if(avg>60 && avg <80) {
+				System.out.println("B");
+			}else if(avg>=80 && avg<=100 ) {
+				System.out.println("A");
+			}else {
+				System.out.println("Invalid marks");
+			}
+				
+		}catch(Exception ex) {
+			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
+			ex.printStackTrace();
+			System.out.println("Exceptioin in singleStudentResult(): " + ex);
 		}finally {
 			if(session != null) {
 				session.close();

@@ -117,6 +117,8 @@ public class App
         	System.out.println("Enter 9 to Update Student");
         	System.out.println("Enter 10 to remove Student Enrollement");
         	System.out.println("Enter 11 to give marks to Student");
+        	System.out.println("Enter 12 to See marks of Students");
+        	System.out.println("Enter 13 to See marks of single Student");
         	
         	System.out.println("Enter Option");
         	int opt = sc.nextInt();
@@ -163,6 +165,14 @@ public class App
         				
         	case 11:
         		marksDao.giveMarksToStudent();
+        		break;
+        		
+        	case 12:
+        		studentDao.studentsResult();
+        		break;
+        		
+        	case 13:
+        		studentDao.singleStudentResult();
         		break;
         	
         	default:
