@@ -539,6 +539,65 @@ public class StudentDao {
 		}
 		
 	}
+
+	public void studentsAttendanceReportByMonth() {
+		try {
+			session = factory.openSession();
+			transaction = session.beginTransaction();
+			
+			System.out.println("Enter no of month:");
+			int month = sc.nextInt();
+			
+			if(month<1 && month >12) {
+				System.out.println("Enter a valid month value.");
+				return;
+			}
+			
+			String hql = "FROM Student";
+			Query<Student>query = session.createQuery(hql, Student.class);
+			
+			List<Student> results = query.list();
+			
+			if(results.isEmpty()) {
+				System.out.print("Student not available");
+				return;
+			}
+			
+			int currentMonth;
+			
+			for(Student s: results) {
+				System.out.println("Id: " + s.getId() + ", Username: " + s.getUsername() + ", Email: " + s.getEmail());
+				if(!s.getAttendance().isEmpty()) {
+					currentMonth = s.getAttendance().getFirst().getDate().getMonthValue();
+					System.out.println("Attendance of " + month + "th month");
+					if(currentMonth == month) {
+						
+							for(Attendance atd: s.getAttendance()) {
+								if(atd.getDate().getMonthValue() != atd.getDate().getMonthValue()+1) {		
+									System.out.println("Date: " + atd.getDate() + ", Status: " + atd.getStatus());				
+								}
+							}
+						
+					}else {
+						System.out.println(" --" + s.getUsername() + " was absent whole month");
+					}
+				}else {
+					System.out.println(" --" + s.getUsername() + " was absent whole month");
+				}
+					
+				
+			}
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			System.out.println("Exceptioin in singleStudentResult(): " + ex);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		
+	}
 	
 	
 	

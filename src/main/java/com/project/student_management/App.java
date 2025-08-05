@@ -119,6 +119,7 @@ public class App
         	System.out.println("Enter 11 to give marks to Student");
         	System.out.println("Enter 12 to See marks of Students");
         	System.out.println("Enter 13 to See marks of single Student");
+        	System.out.println("Enter 14 to See Attendance summary of Student");
         	
         	System.out.println("Enter Option");
         	int opt = sc.nextInt();
@@ -173,6 +174,10 @@ public class App
         		
         	case 13:
         		studentDao.singleStudentResult();
+        		break;
+        		
+        	case 14:
+        		studentDao.studentsAttendanceReportByMonth();
         		break;
         	
         	default:
