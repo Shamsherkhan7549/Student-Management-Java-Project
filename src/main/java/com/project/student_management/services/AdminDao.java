@@ -54,7 +54,7 @@ public class AdminDao {
 			query.setParameter("umail", email);
 			List<Admin> result = query.list();
 			if(!result.isEmpty()) {
-				System.out.println("Admin Alread Register With This Username or Email");
+				System.out.println("Admin Already Register With This Username or Email");
 				return null;
 			}
 			

@@ -75,6 +75,7 @@ public class App
         		if(registeredAdmin != null) {
         			isAdminLogin = true;
         		}
+        		System.out.println("Admin not registered");
         	}
         	break;    	
         case 2:
@@ -159,8 +160,7 @@ public class App
         	case 10:
         		studentDao.removeEnrollment();
         		break;
-        		
-        		
+        				
         	case 11:
         		marksDao.giveMarksToStudent();
         		break;

@@ -33,18 +33,12 @@ public class MarksDao {
 	public void giveMarksToStudent() {
 		try {
 			session = factory.openSession();
-			transaction = session.beginTransaction();
-			Marks marks = new Marks();
-			Course course = new Course();
-			Student student = new Student();
-					
+			transaction = session.beginTransaction();					
 			System.out.println("Enter Student Id : ");
 			int student_id = sc.nextInt();
-			student.setId(student_id);
 			
 			System.out.println("Enter course Id : ");
 			int course_id = sc.nextInt();
-			course.setCourse_id(course_id);
 			
 			System.out.println("Enter Marks");
 			int course_marks = sc.nextInt();
@@ -54,6 +48,11 @@ public class MarksDao {
 			
 			if(studentInfo == null && courseInfo == null) {
 				System.out.println("student-id or course-id is not available");
+				return;
+			}
+			
+			if(!studentInfo.getCourses().contains(courseInfo)) {
+				System.out.println("This course is not available with this id");
 				return;
 			}
 			
@@ -69,8 +68,9 @@ public class MarksDao {
 				return;
 			}
 			
-			marks.setStudent(student);
-			marks.setCourse(course);
+			Marks marks = new Marks();
+			marks.setStudent(studentInfo);
+			marks.setCourse(courseInfo);
 			marks.setMarks(course_marks);
 			
 			session.save(marks);

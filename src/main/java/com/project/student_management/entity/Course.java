@@ -29,7 +29,7 @@ public class Course {
 	@ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
 	Set<Admin> admins = new HashSet<>();
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
 	private List<Attendance> attendance = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "course", fetch = FetchType.EAGER)

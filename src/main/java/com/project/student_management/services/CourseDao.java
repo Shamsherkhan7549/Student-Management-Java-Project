@@ -171,15 +171,32 @@ public class CourseDao {
 			int id = sc.nextInt();
 			
 			Course courseInfo = session.get(Course.class, id);
-			System.out.println("courseInfo : " + courseInfo);
+			
 			if(courseInfo == null) {
-				System.out.println("course is not available");
+				System.out.println("Course not found");
 				return;
+			}
+			
+			String hql = "DELETE FROM Attendance WHERE course.id = :cid";
+			Query query = session.createQuery(hql,Attendance.class); // Int after running hql query it does not return Attendance object but return no of row effected
+			query.setParameter("cid", id);
+			query.executeUpdate();
+			
+			// shared reference deleted
+			if(courseInfo != null) {
+				for(Student s: courseInfo.getStudents()) {
+					s.getCourses().remove(courseInfo);
+				}
+				
+				for(Admin a: courseInfo.getAdmins()) {
+					a.getCourses().remove(courseInfo);
+				}				
+				
 			}
 			
 			String course_name = courseInfo.getCourse_name();
 			
-			courseInfo.setCourse_id(id);
+			
 			session.delete(courseInfo);
 			transaction.commit();
 			

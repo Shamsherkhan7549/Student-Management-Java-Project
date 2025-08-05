@@ -36,8 +36,6 @@ public class AttendanceDao {
 			
 			session = factory.openSession();
 			transaction = session.beginTransaction();
-			
-			Attendance attendance = new Attendance();
 
 			int student_id = registeredStudent.getId();
 
@@ -67,6 +65,7 @@ public class AttendanceDao {
 				 return;
 			 }
 			 
+			 Attendance attendance = new Attendance();
 			 attendance.setDate(date);
 			attendance.setStatus(isPresent);
 			attendance.setStudent(student);

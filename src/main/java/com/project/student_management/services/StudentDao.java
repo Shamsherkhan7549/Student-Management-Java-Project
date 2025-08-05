@@ -143,17 +143,50 @@ public class StudentDao {
 			
 			System.out.println("Student Profile: ");
 			
-			System.out.println("Username : " + registeredStudent.getUsername());
-			System.out.println("Email : " + registeredStudent.getEmail());
+			Student student = session.get(Student.class, registeredStudent.getId());
+			
+			
+			System.out.println("Username : " + student.getUsername());
+			System.out.println("Email : " + student.getEmail());
 			System.out.println("Purchased Courses : ");
 			
-			if(!registeredStudent.getCourses().isEmpty()) {
+			if(!student.getCourses().isEmpty()) {
 				for(Course course: registeredStudent.getCourses()) {
 					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
 				}
 			}else {
 				System.out.println("No course Purchased ");
 			}
+			 
+			// Printing marks
+			int totalSub = 0;
+			int totalMarks = 0;
+			System.out.println("Your Results : ");
+			if(!student.getMarks().isEmpty()) {
+				for(Marks marks: student.getMarks()) {
+					totalSub++;
+					totalMarks += marks.getMarks();
+					System.out.println("course: " + marks.getCourse().getCourse_name() + ",  marks: " + marks.getMarks());
+				}
+			}
+			
+			System.out.println("Total Marks : " + totalMarks);
+			int avg = totalMarks/totalSub;
+			System.out.println("Average : " +  avg);
+			System.out.print("Grade : ");
+			if(avg < 0 && avg <30) {
+				System.out.println("Fails");
+			}else if(avg >= 30 && avg <=60) {
+				System.out.println("C");
+			}else if(avg>60 && avg <80) {
+				System.out.println("B");
+			}else if(avg>=80 && avg<=100 ) {
+				System.out.println("A");
+			}else {
+				System.out.println("There is problem in giving marks");
+			}
+			
+			
 			
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -254,7 +287,7 @@ public class StudentDao {
 			System.out.println("List of Students : ");
 			for(Student s: results) {
 				System.out.println("Id : " + s.getId() + ", Username : " + s.getUsername() + ", Email : " + s.getEmail());
-				System.out.println("s.getCourses() : " + s.getCourses());
+				
 				if(!s.getCourses().isEmpty()) {
 					System.out.println("List of Courses bought : ");
 					for(Course c: s.getCourses()) {
@@ -334,13 +367,11 @@ public class StudentDao {
 			session = factory.openSession();
 			transaction = session.beginTransaction();
 			
-			Student student = new Student();
-			
 			System.out.println("Enter student id to remove enrollment.");
 			int id = sc.nextInt();
-			student.setId(id);
 			
-			student = session.get(Student.class, id);
+			Student student = session.get(Student.class, id);
+			
 			if(student == null) {
 				System.out.println("Student is not available with this id");
 				return;
@@ -368,12 +399,15 @@ public class StudentDao {
 						transaction.rollback();
 						System.out.println("Student Enrollment not removed");
 						return;
-					}			
+					}	
+					
+					transaction.commit();
+					System.out.println("Student Enrollment removed");
+					
 				}	
 			}
 			
-			transaction.commit();
-			System.out.println("Student Enrollment removed");
+			
 			
 		}catch(Exception ex) {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
