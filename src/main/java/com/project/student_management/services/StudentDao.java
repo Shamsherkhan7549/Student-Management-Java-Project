@@ -79,7 +79,7 @@ public class StudentDao {
 //			};
 			
 			
-			System.out.println("You are Registered Successfully");
+			System.out.println("Student Registered Successfully");
 			return student;
 		}catch(Exception ex) {
 			if(transaction != null && transaction.getStatus() != TransactionStatus.COMMITTED) transaction.rollback();
@@ -148,14 +148,16 @@ public class StudentDao {
 			
 			System.out.println("Username : " + student.getUsername());
 			System.out.println("Email : " + student.getEmail());
-			System.out.println("Purchased Courses : ");
+			System.out.println("--> Purchased Courses : ");
 			
 			if(!student.getCourses().isEmpty()) {
-				for(Course course: registeredStudent.getCourses()) {
-					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
+				for(Course course: student.getCourses()) {
+					System.out.println("     Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
 				}
+				System.out.println();
 			}else {
-				System.out.println("No course Purchased ");
+				System.out.println("--> No course Purchased ");
+				System.out.println();
 			}
 			 
 			// Printing marks
@@ -171,6 +173,9 @@ public class StudentDao {
 			}
 			
 			System.out.println("Total Marks : " + totalMarks);
+			if(totalSub == 0) {
+				totalSub = 1;
+			}
 			int avg = totalMarks/totalSub;
 			System.out.println("Average : " +  avg);
 			System.out.print("Grade : ");
@@ -284,17 +289,19 @@ public class StudentDao {
 			Query<Student> query = session.createQuery(hql, Student.class);
 			
 			List<Student> results = query.list();
-			System.out.println("List of Students : ");
+			System.out.println("List of Students With Purchased Course: ");
 			for(Student s: results) {
 				System.out.println("Id : " + s.getId() + ", Username : " + s.getUsername() + ", Email : " + s.getEmail());
 				
 				if(!s.getCourses().isEmpty()) {
-					System.out.println("List of Courses bought : ");
+					System.out.println("List of Courses Purchased : ");
 					for(Course c: s.getCourses()) {
-						System.out.println("Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
+						System.out.println("  --> Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
 					}
+					System.out.println();
 				}else {
-					System.out.println("No Course Purchased");
+					System.out.println("  --> No Course Purchased");
+					System.out.println();
 				}
 			}
 			
@@ -442,7 +449,7 @@ public class StudentDao {
 			int avg;
 			
 			for(Student s: results) {
-				System.out.println("Student id: " + s.getId() + ", Username: " + s.getUsername());
+				System.out.println("  --> Student id: " + s.getId() + ", Username: " + s.getUsername() + ", Email: " + s.getEmail());
 				totalMarks = 0;
 				totalSub = 0;
 				avg = 0;
@@ -450,7 +457,7 @@ public class StudentDao {
 					for(Marks marks: s.getMarks()) {
 						totalMarks += marks.getMarks();
 						totalSub++;
-						System.out.println("Course id: " + marks.getCourse().getCourse_id() + ", Course : " + marks.getCourse().getCourse_name() + ", marks: " + marks.getMarks());
+						System.out.println("  -> Course id: " + marks.getCourse().getCourse_id() + ", Course : " + marks.getCourse().getCourse_name() + ", marks: " + marks.getMarks());
 							
 					}
 					
@@ -458,7 +465,7 @@ public class StudentDao {
 					avg = totalMarks/totalSub;
 					System.out.println("Average Marks: " + avg);
 					System.out.print("Grade : ");
-					if(avg < 0 && avg <30) {
+					if(avg >= 0 && avg <30) {
 						System.out.println("Fails");
 					}else if(avg >= 30 && avg <=60) {
 						System.out.println("C");
@@ -467,11 +474,11 @@ public class StudentDao {
 					}else if(avg>=80 && avg<=100 ) {
 						System.out.println("A");
 					}else {
-						System.out.println("There is problem in giving marks");
+						System.out.println("Invalid marks");
 					}
 					
 				}else {
-					System.out.println("Marks not given to " + s.getUsername());
+					System.out.println("   -> Marks not given to " + s.getUsername());
 				}
 				
 				
@@ -496,10 +503,10 @@ public class StudentDao {
 			int id = sc.nextInt();
 			
 			Student student = session.get(Student.class, id);
-			System.out.println("Id: " + student.getId() +", Username: " + student.getUsername() + ", Email: " + student.getEmail());
-			System.out.println("Results: ");
+			System.out.println("  --> Id: " + student.getId() +", Username: " + student.getUsername() + ", Email: " + student.getEmail());
+			System.out.println("  --> Results: ");
 			if(student.getMarks().isEmpty()) {
-				System.out.println("Marks of " + student.getUsername() + " not added");
+				System.out.println("   -> Marks of " + student.getUsername() + " not added");
 				return;
 			}
 			
@@ -563,28 +570,25 @@ public class StudentDao {
 				return;
 			}
 			
-			int currentMonth;
 			
 			for(Student s: results) {
-				System.out.println("Id: " + s.getId() + ", Username: " + s.getUsername() + ", Email: " + s.getEmail());
+				System.out.println("  --> Id: " + s.getId() + ", Username: " + s.getUsername() + ", Email: " + s.getEmail());
+				
 				if(!s.getAttendance().isEmpty()) {
-					currentMonth = s.getAttendance().getFirst().getDate().getMonthValue();
-					System.out.println("Attendance of " + month + "th month");
-					if(currentMonth == month) {
-						
-							for(Attendance atd: s.getAttendance()) {
-								if(atd.getDate().getMonthValue() != atd.getDate().getMonthValue()+1) {		
-									System.out.println("Date: " + atd.getDate() + ", Status: " + atd.getStatus());				
-								}
-							}
-						
-					}else {
-						System.out.println(" --" + s.getUsername() + " was absent whole month");
-					}
-				}else {
-					System.out.println(" --" + s.getUsername() + " was absent whole course");
-				}
 					
+					System.out.println("  --> Attendance of " + month + "th month");
+					List<Attendance> attendances = s.getAttendance();
+					for(Attendance atd: attendances) {
+						if(atd.getDate().getMonthValue() == month) {
+							System.out.println("  --> Course: " + atd.getCourse().getCourse_name() + ", Date: " + atd.getDate() + ", Status: " + atd.getStatus());			
+						}
+					}
+					System.out.println();
+					
+				}else {
+					System.out.println("  --> " + s.getUsername() + " was absent whole course");
+					System.out.println();
+				}
 				
 			}
 			

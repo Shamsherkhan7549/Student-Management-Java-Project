@@ -31,8 +31,6 @@ public class AdminDao {
 	
 	//Admin signUp
 	public Admin singupAdmin() {
-		session = null;
-		transaction = null;
 		try {
 			session = factory.openSession();
 			transaction = session.beginTransaction();		
@@ -82,8 +80,6 @@ public class AdminDao {
 	
 	//Admin Login
 	public Admin loginAdmin() {
-		session = null;
-		transaction = null;
 		try {
 			session = factory.openSession();
 			transaction = session.beginTransaction();
@@ -123,24 +119,24 @@ public class AdminDao {
 
 	// Admin Profile
 	public void profile(Admin registeredAdmin) {
-		session = null;
-		transaction = null;
 		try {
 			session = factory.openSession();
 			transaction = session.beginTransaction();
 			
+			Admin admin = session.get(Admin.class, registeredAdmin.getId());
+			
 			System.out.println("Admin Profile: ");
 			
-			System.out.println("Username : " + registeredAdmin.getUsername());
-			System.out.println("Email : " + registeredAdmin.getEmail());
+			System.out.println("Username : " + admin.getUsername());
+			System.out.println("Email : " + admin.getEmail());
 			
 			System.out.println("Courses : ");
-			if(!registeredAdmin.getCourses().isEmpty()) {
-				for(Course course: registeredAdmin.getCourses()) {
-					System.out.println("Course_id : " + course.getCourse_id() + ", Course : " + course.getCourse_name() + ", Duration : " + course.getDuration());
+			if(!admin.getCourses().isEmpty()) {
+				for(Course course: admin.getCourses()) {
+					System.out.println("  --> Course_id: " + course.getCourse_id() + ", Course: " + course.getCourse_name() + ", Duration: " + course.getDuration());
 				}
 			}else {
-				System.out.println("No course Added to Profile");
+				System.out.println("  --> No course Added to Profile");
 			}
 			
 			
@@ -156,8 +152,6 @@ public class AdminDao {
 	}
 
 	public void addCourseToProfile(Admin registeredAdmin) {
-		session = null;
-		transaction = null;
 		try {
 			
 			session = factory.openSession();
@@ -183,6 +177,7 @@ public class AdminDao {
 				System.out.println("Enter Course_id to Add Your Profile : ");
 				int course_id = sc.nextInt();
 				
+				Admin admin = session.get(Admin.class, registeredAdmin.getId());
 				Course selectedCourse = session.get(Course.class, course_id);
 				
 				if(selectedCourse == null) {
@@ -190,15 +185,17 @@ public class AdminDao {
 					return;
 				}
 				
-				if(registeredAdmin.getCourses().contains(selectedCourse)) {
+				if(admin.getCourses().contains(selectedCourse)) {
 					System.out.println("This Course is Already Added");
 					return;
 				}
 				
-				selectedCourse.setCourse_id(course_id);
-				registeredAdmin.getCourses().add(selectedCourse);
 				
-				session.update(registeredAdmin);
+				
+				selectedCourse.setCourse_id(course_id);
+				admin.getCourses().add(selectedCourse);
+				
+				session.update(admin);
 				transaction.commit();
 				System.out.println("Course Saved");	
 			

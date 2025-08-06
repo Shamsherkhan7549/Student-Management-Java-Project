@@ -47,7 +47,7 @@ public class CourseDao {
 				System.out.println("Course is Empty");
 				return ;
 			}
-			
+			System.out.println("Courses list: ");
 			for(Course course: results) {
 				System.out.println("course id : " + course.getCourse_id() + ", course : " + course.getCourse_name() + ", duration : " + course.getDuration() + ", fees : " + course.getFees());
 			}

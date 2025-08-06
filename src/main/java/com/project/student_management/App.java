@@ -59,50 +59,60 @@ public class App
         //Check Login
         boolean isAdminLogin = false;       
         boolean isStudentLogin = false;
+       
         
-        System.out.println("Enter Option : ");
-        int option = sc.nextInt();
+       try {
+    	   System.out.println("Enter Option : ");
+    	   int option = sc.nextInt();
+    	   
+    	   switch(option) {
+           case 1:
+           	 // AdminDao configure
+             
+           	System.out.println("Enter Admin Passcode");
+           	String passcode = sc.next();
+           	
+           	if(passcode.equals("adminpasscode")) {        		
+           		registeredAdmin = adminDao.singupAdmin();
+           		if(registeredAdmin != null) {
+           			isAdminLogin = true;
+           		}
+           		System.out.println("Admin not registered");
+           	}
+           	break;    	
+           case 2:
+           	 // AdminDao configure
               
-        switch(option) {
-        case 1:
-        	 // AdminDao configure
-          
-        	System.out.println("Enter Admin Passcode");
-        	String passcode = sc.next();
-        	
-        	if(passcode.equals("adminpasscode")) {        		
-        		registeredAdmin = adminDao.singupAdmin();
-        		if(registeredAdmin != null) {
-        			isAdminLogin = true;
-        		}
-        		System.out.println("Admin not registered");
-        	}
-        	break;    	
-        case 2:
-        	 // AdminDao configure
-           
-        	registeredAdmin = adminDao.loginAdmin();
-        	if(registeredAdmin != null) {
-        		isAdminLogin = true;
-        	}
-        	break;
-        case 3:
-        	
-        	registeredStudent = studentDao.singupStudent();
-    		if(registeredStudent != null) {
-    			isStudentLogin = true;
-    		}
-        	break;
-        case 4:
-        	// student login
-        	
-        	registeredStudent = studentDao.loginStudent();
-        	if(registeredStudent != null) {
-        		isStudentLogin = true;
-        	}	
-        	break;
-        }
+           	registeredAdmin = adminDao.loginAdmin();
+           	if(registeredAdmin != null) {
+           		isAdminLogin = true;
+           	}
+           	break;
+           case 3:
+           	
+           	registeredStudent = studentDao.singupStudent();
+       		if(registeredStudent != null) {
+       			isStudentLogin = true;
+       		}
+           	break;
+           case 4:
+           	// student login
+           	
+           	registeredStudent = studentDao.loginStudent();
+           	if(registeredStudent != null) {
+           		isStudentLogin = true;
+           	}	
+           	break;
+           }
+    	   
+       }catch(Exception ex) {
+    	   System.out.println("Please Enter A Valid Option: " + ex);
+       }
         
+        
+              
+       
+        try {
         //Admin functionalities
         while(isAdminLogin) {
         	System.out.println("Enter 1 to See Profile"); 
@@ -188,12 +198,15 @@ public class App
         	char per = sc.next().charAt(0);
         	if(per == 'y') {
         		isAdminLogin = false;
-        	} 	
-        	
+        	} 		
         }
+       }catch(Exception ex) {
+    	   System.out.println("Exception in admin switch: " + ex);
+       }
         
         //Student Functionalities
         
+        try {
         while(isStudentLogin) {
         	System.out.println("Enter 1 to See Profile");
         	System.out.println("Enter 2 to See all Course");
@@ -228,6 +241,10 @@ public class App
         		isStudentLogin = false;
         	} 	
         	
+        }
+        
+        }catch(Exception ex) {
+        	System.out.println("Exception in student switch: "+ ex);
         }
         
         

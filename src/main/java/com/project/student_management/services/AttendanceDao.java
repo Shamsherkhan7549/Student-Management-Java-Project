@@ -7,13 +7,10 @@ import java.util.Scanner;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
-import com.project.student_management.entity.Admin;
 import com.project.student_management.entity.Attendance;
 import com.project.student_management.entity.Course;
-import com.project.student_management.entity.Marks;
 import com.project.student_management.entity.Student;
 
 public class AttendanceDao {

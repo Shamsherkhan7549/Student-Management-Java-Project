@@ -52,7 +52,7 @@ public class MarksDao {
 			}
 			
 			if(!studentInfo.getCourses().contains(courseInfo)) {
-				System.out.println("This course is not available with this id");
+				System.out.println(" No Course Purchased  with this id by this Student");
 				return;
 			}
 			
