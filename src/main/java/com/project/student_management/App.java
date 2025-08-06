@@ -141,7 +141,7 @@ public class App
         		break;
         		
         	case 5:
-        		courseDao.deleteCourese();
+        		courseDao.deleteCourse();
         		break;
         		
         	case 6:

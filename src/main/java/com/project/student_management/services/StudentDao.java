@@ -582,7 +582,7 @@ public class StudentDao {
 						System.out.println(" --" + s.getUsername() + " was absent whole month");
 					}
 				}else {
-					System.out.println(" --" + s.getUsername() + " was absent whole month");
+					System.out.println(" --" + s.getUsername() + " was absent whole course");
 				}
 					
 				

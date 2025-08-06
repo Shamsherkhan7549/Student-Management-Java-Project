@@ -161,7 +161,7 @@ public class CourseDao {
 	}
 
 	// delete course
-	public void deleteCourese() {
+	public void deleteCourse() {
 		try {
 
 			session = factory.openSession();
@@ -178,12 +178,20 @@ public class CourseDao {
 			}
 			
 			String hql = "DELETE FROM Attendance WHERE course.id = :cid";
-			Query query = session.createQuery(hql,Attendance.class); // Int after running hql query it does not return Attendance object but return no of row effected
+			//DELETE queries are not SELECT queries, so you must not pass a result type (Attendance.class).
+			Query<?> query = session.createQuery(hql); //  after running hql query it does not return Attendance object but return no of row effected and 
 			query.setParameter("cid", id);
 			query.executeUpdate();
 			
+			String hql2 = "DELETE FROM Marks WHERE course.id = :cid";
+			Query<?> query2 = session.createQuery(hql2);
+			query2.setParameter("cid", id);
+			
+
+			query2.executeUpdate();
+			
+			
 			// shared reference deleted
-			if(courseInfo != null) {
 				for(Student s: courseInfo.getStudents()) {
 					s.getCourses().remove(courseInfo);
 				}
@@ -192,7 +200,8 @@ public class CourseDao {
 					a.getCourses().remove(courseInfo);
 				}				
 				
-			}
+			
+			
 			
 			String course_name = courseInfo.getCourse_name();
 			
