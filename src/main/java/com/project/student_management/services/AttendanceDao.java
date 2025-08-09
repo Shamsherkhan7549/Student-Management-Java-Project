@@ -45,6 +45,18 @@ public class AttendanceDao {
 			Student student = session.get(Student.class, student_id);
 			Course course = session.get(Course.class, course_id);
 			
+			if(course == null) {
+				System.out.println("Course is not available with this id.");
+				return;
+			}
+			
+			boolean isPurchased = student.getCourses().contains(course);
+			
+			if( !isPurchased) {
+				System.out.println("Course is not purchased with this id.");
+				return ;
+			}
+			
 			// Todays Date
 			 LocalDate date = LocalDate.now();
 			 
