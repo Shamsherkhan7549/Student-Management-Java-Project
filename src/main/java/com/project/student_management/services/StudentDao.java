@@ -291,12 +291,12 @@ public class StudentDao {
 			List<Student> results = query.list();
 			System.out.println("List of Students With Purchased Course: ");
 			for(Student s: results) {
-				System.out.println("Id : " + s.getId() + ", Username : " + s.getUsername() + ", Email : " + s.getEmail());
+				System.out.println("Id: " + s.getId() + ", Username: " + s.getUsername() + ", Email: " + s.getEmail());
 				
 				if(!s.getCourses().isEmpty()) {
 					System.out.println("List of Courses Purchased : ");
 					for(Course c: s.getCourses()) {
-						System.out.println("  --> Course_id : " + c.getCourse_id() + ", Course : " + c.getCourse_name() + ", Duration : " + c.getDuration() + ", Fees : " + c.getFees());
+						System.out.println("  --> Course_id: " + c.getCourse_id() + ", Course: " + c.getCourse_name() + ", Duration: " + c.getDuration() + ", Fees: " + c.getFees());
 					}
 					System.out.println();
 				}else {
@@ -450,6 +450,8 @@ public class StudentDao {
 			
 			for(Student s: results) {
 				System.out.println("  --> Student id: " + s.getId() + ", Username: " + s.getUsername() + ", Email: " + s.getEmail());
+				System.out.println();
+				
 				totalMarks = 0;
 				totalSub = 0;
 				avg = 0;
@@ -461,10 +463,15 @@ public class StudentDao {
 							
 					}
 					
-					System.out.println("Total Marks: " + totalMarks);
+					System.out.println();
+					
+					System.out.println("     Total Marks: " + totalMarks);
+					if(totalSub == 0) {
+						totalSub = 1;
+					}
 					avg = totalMarks/totalSub;
-					System.out.println("Average Marks: " + avg);
-					System.out.print("Grade : ");
+					System.out.println("     Average Marks: " + avg);
+					System.out.print("     Grade : ");
 					if(avg >= 0 && avg <30) {
 						System.out.println("Fails");
 					}else if(avg >= 30 && avg <=60) {
@@ -476,9 +483,12 @@ public class StudentDao {
 					}else {
 						System.out.println("Invalid marks");
 					}
+					System.out.println();
+					System.out.println();
 					
 				}else {
 					System.out.println("   -> Marks not given to " + s.getUsername());
+					System.out.println();
 				}
 				
 				
@@ -504,6 +514,7 @@ public class StudentDao {
 			
 			Student student = session.get(Student.class, id);
 			System.out.println("  --> Id: " + student.getId() +", Username: " + student.getUsername() + ", Email: " + student.getEmail());
+			System.out.println();
 			System.out.println("  --> Results: ");
 			if(student.getMarks().isEmpty()) {
 				System.out.println("   -> Marks of " + student.getUsername() + " not added");

@@ -122,7 +122,7 @@ public class App
         	System.out.println("Enter 5 to Delete Course");
         	System.out.println("Enter 6 to add Course in your profile");
         	
-        	System.out.println("Enter 7 to View Students With Course");      
+        	System.out.println("Enter 7 to View Enrolled Student");      
         	System.out.println("Enter 8 to Add Student");      	
         	System.out.println("Enter 9 to Update Student");
         	System.out.println("Enter 10 to remove Student Enrollement");

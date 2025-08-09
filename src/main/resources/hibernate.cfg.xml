@@ -6,13 +6,13 @@
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/studentmanagement</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">***********</property>
+        <property name="hibernate.connection.password">Shamsher@mysql</property>
 
         <!-- SQL dialect -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
         <!-- Echo SQL to console -->
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
         <property name="hibernate.format_sql">true</property>
 
         <!-- Automatically create/update schema -->
